@@ -1,0 +1,108 @@
+<h1 class="mb-4">Transactions & Simulator</h1>
+
+<div class="flex-panel mb-4">
+    <div class="glass-card">
+        <h3 class="mb-3">Simulate Deposit / Withdraw</h3>
+        <form action="/transactions/add" method="POST">
+            <div class="form-group">
+                <label>Target Account</label>
+                <select name="accountNo" class="form-control" required>
+                    <% accounts.forEach(a => { %>
+                        <option value="<%= a.AccountNo %>">ACC: <%= a.AccountNo %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <div class="form-group flex-1" style="flex: 1;">
+                    <label>Action</label>
+                    <select name="type" class="form-control" required>
+                        <option value="Deposit">Deposit</option>
+                        <option value="Withdraw">Withdraw</option>
+                    </select>
+                </div>
+                <div class="form-group flex-1" style="flex: 1;">
+                    <label>Amount ($)</label>
+                    <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Execute Action</button>
+        </form>
+    </div>
+
+    <div class="glass-card">
+        <h3 class="mb-3" style="color: var(--accent-primary);">Transfer Funds</h3>
+        <form action="/transactions/transfer" method="POST">
+            <div class="d-flex gap-2">
+                <div class="form-group flex-1" style="flex: 1;">
+                    <label>From Account</label>
+                    <select name="fromAccount" class="form-control" required>
+                        <% accounts.forEach(a => { %>
+                            <option value="<%= a.AccountNo %>">ACC: <%= a.AccountNo %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-group flex-1" style="flex: 1;">
+                    <label>To Account</label>
+                    <input type="number" name="toAccount" class="form-control" placeholder="Dest ACC ID" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Amount ($)</label>
+                <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--accent-primary);">Initiate Transfer</button>
+        </form>
+    </div>
+</div>
+
+<div class="glass-card table-container">
+    <h3 class="mb-3">Transaction Log</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tx ID</th>
+                <th>Source/Acc</th>
+                <th>Destination</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Date / Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (transactions.length === 0) { %>
+                <tr><td colspan="6" class="text-center">No transactions recorded.</td></tr>
+            <% } else { %>
+                <% transactions.forEach(t => { %>
+                    <tr>
+                        <td style="color: var(--text-secondary);">#<%= t.TransactionID %></td>
+                        <td>
+                            <% if (t.Type === 'Transfer') { %>
+                                <%= t.FromAccount %>
+                            <% } else { %>
+                                <%= t.AccountNo %>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (t.Type === 'Transfer') { %>
+                                <%= t.ToAccount %>
+                            <% } else { %>
+                                <span style="color: var(--text-secondary);">-</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (t.Type === 'Deposit') { %>
+                                <span class="tag tag-deposit">Deposit</span>
+                            <% } else if (t.Type === 'Withdraw') { %>
+                                <span class="tag tag-withdraw">Withdraw</span>
+                            <% } else { %>
+                                <span class="tag tag-transfer">Transfer</span>
+                            <% } %>
+                        </td>
+                        <td style="font-weight: 600;">$<%= parseFloat(t.Amount).toFixed(2) %></td>
+                        <td style="color: var(--text-secondary);"><%= new Date(t.Date).toLocaleString() %></td>
+                    </tr>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+</div>

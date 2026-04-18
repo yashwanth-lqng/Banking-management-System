@@ -1,0 +1,75 @@
+<div class="page-header">
+    <h1 class="page-title">Accounts</h1>
+</div>
+
+<div class="add-form-container">
+    <h3>Add New Account</h3>
+    <form action="/accounts/add" method="POST" style="margin-top: 1rem; display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+        <div class="form-group" style="flex: 1; min-width: 120px;">
+            <label>Account No</label>
+            <input type="number" name="accountNo" class="form-control" required>
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label>Type</label>
+            <select name="accountType" class="form-control" required style="background: rgba(15, 23, 42, 0.6); color: white;">
+                <option value="Savings">Savings</option>
+                <option value="Current">Current</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label>Balance</label>
+            <input type="number" step="0.01" name="balance" class="form-control" required>
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label>Branch</label>
+            <select name="branchId" class="form-control" required style="background: rgba(15, 23, 42, 0.6); color: white;">
+                <% branches.forEach(b => { %>
+                    <option value="<%= b.BranchID %>"><%= b.Name %></option>
+                <% }) %>
+            </select>
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label>Opening Date</label>
+            <input type="date" name="openingDate" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-bottom: 1rem;">Add Account</button>
+    </form>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Balance</th>
+                <th>Branch</th>
+                <th>Opening Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (accounts.length === 0) { %>
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">No accounts found.</td>
+                </tr>
+            <% } else { %>
+                <% accounts.forEach(account => { %>
+                    <tr>
+                        <td><%= account.AccountNo %></td>
+                        <td><%= account.AccountType %></td>
+                        <td>$<%= parseFloat(account.Balance).toFixed(2) %></td>
+                        <td><%= account.BranchName || account.BranchID %></td>
+                        <td><%= account.OpeningDate ? new Date(account.OpeningDate).toISOString().split('T')[0] : '' %></td>
+                        <td>
+                            <form action="/accounts/delete" method="POST" onsubmit="return confirm('Delete this account?');">
+                                <input type="hidden" name="accountNo" value="<%= account.AccountNo %>">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+</div>

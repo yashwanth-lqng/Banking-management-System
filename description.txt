@@ -1,0 +1,259 @@
+DBMS Project – Database Design Blueprint
+Register Number: AP24110011685
+Name: D. Yashwanth
+
+1. Project Title: Banking management system
+
+2. List of Entities (Tables): Branch, Customers, Accounts, Account_holders,
+Transactions, Loans
+
+3. Table Structures:
+1. Branch
+Column Name Data type Constraint
+BranchID INT PRIMARY KEY
+Name VARCHAR(50)
+Address VARCHAR(100)
+2. Customers
+Column Name Data type Constraint
+CustomerID INT PRIMARY KEY
+Name VARCHAR(30)
+Phone VARCHAR(15)
+Address VARCHAR(100)
+3. Accounts
+Column Name Data type Constraint
+AccountNo INT PRIMARY KEY
+AccountType VARCHAR(20)
+Balance DECIMAL(10,2) CHECK(Balance&gt;=0)
+BranchID INT FOREIGN KEY
+(BranchID)
+REFERENCES
+Branch(BranchID)
+
+OpeningDate DATE
+
+4. Account_holders
+Column Name Data type Constraint
+CustomerID INT FOREIGN KEY
+(CustomerID)
+REFERENCES
+Customers(CustomerID
+)
+
+AccountNo INT FOREIGN KEY
+(AccountNo)
+REFERENCES
+Accounts(AccountNo)
+
+(CustomerID,
+AccountNo)
+
+PRIMARY KEY
+
+5. Transactions
+Column Name Data type Constraint
+TransactionID INT PRIMARY KEY
+AccountNo INT FOREIGN KEY (AccountNo)
+
+REFERENCES
+Accounts(AccountNo)
+Type VARCHAR(20) CHECK (Type IN
+
+(&#39;Deposit&#39;,&#39;Withdraw&#39;,&#39;Transfer&#39;)
+)
+
+Amount DECIMAL(10,2) CHECK(Amount&gt;0)
+Date DATE
+6. Loans
+Column Name Data type Constraint
+LoanID INT PRIMARY KEY
+LoanType VARCHAR(30)
+Amount DECIMAL(10,2)
+CustomerID INT FOREIGN
+
+KEY(CustomerID) RE
+BranchID INT FOREIGN KEY
+(BranchID)
+REFERENCES
+Branch(BranchID)
+
+InterestRate DECIMAL(5,2)
+
+4. Keys Identification in each table. (Primary keys and foreign keys)
+Primary Keys (PK)
+ Branch --&gt; BranchID
+ Customer --&gt; CustomerID
+ Account --&gt; AccountNo
+ Transaction --&gt; TransactionID
+ Loan --&gt; LoanID
+ Account_Holder --&gt; (CustomerID, AccountNo) (Composite Key)
+Foreign Keys (FK)
+ Account --&gt; BranchID --&gt; Branch(BranchID)
+ Account_Holder --&gt;
+o CustomerID --&gt; Customer(CustomerID)
+o AccountNo --&gt; Account(AccountNo)
+ Transaction --&gt; AccountNo --&gt; Account(AccountNo)
+ Loan --&gt;
+o CustomerID --&gt; Customer(CustomerID)
+o BranchID --&gt; Branch(BranchID)
+
+5. Relationships Between Tables (One-to-Many / Many-to-Many)
+1. Branch --&gt; Account
+ Type: One-to-Many (1:N)
+ One branch can have many accounts
+ One account belongs to one branch
+
+2. Branch --&gt; Loan
+ Type: One-to-Many (1:N)
+ One branch offers many loans
+
+3. Customer ↔ Account
+ Type: Many-to-Many (M:N)
+ Implemented using Account_Holder table
+ A customer can have multiple accounts
+ An account can be jointly held by multiple customers
+
+4. Account --&gt; Transaction
+ Type: One-to-Many (1:N)
+ One account can have many transactions
+
+5. Customer --&gt; Loan
+ Type: One-to-Many (1:N)
+ One customer can take multiple loans
+
+Instructions for Students
+● Minimum 3 tables
+● Must include:
+o Primary Keys
+o Foreign Keys
+● Proper relationships are compulsory
+
+6. Table Creation Commands
+Write the SQL CREATE TABLE commands for all tables.
+Table 1: Branch
+CREATE TABLE Branch (
+BranchID INT PRIMARY KEY,
+
+Name VARCHAR(50) NOT NULL,
+Address VARCHAR(100)
+);
+Table 2: Customers
+CREATE TABLE Customers (
+CustomerID INT PRIMARY KEY,
+Name VARCHAR(30) NOT NULL,
+Phone VARCHAR(15),
+Address VARCHAR(100)
+);
+Table 3: Accounts
+CREATE TABLE Accounts (
+AccountNo INT PRIMARY KEY,
+AccountType VARCHAR(20),
+Balance DECIMAL(10,2) CHECK (Balance &gt;= 0),
+BranchID INT,
+OpeningDate DATE,
+FOREIGN KEY (BranchID) REFERENCES Branch(BranchID)
+);
+ALTER TABLE Accounts
+ADD CONSTRAINT chk_account_type
+CHECK (AccountType IN (&#39;Savings&#39;,&#39;Current&#39;));
+Table 4: Account_holders
+CREATE TABLE Account_Holders (
+CustomerID INT,
+AccountNo INT,
+PRIMARY KEY (CustomerID, AccountNo),
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+FOREIGN KEY (AccountNo) REFERENCES Accounts(AccountNo)
+
+);
+Table 5: Transactions
+CREATE TABLE Transactions (
+TransactionID INT PRIMARY KEY,
+AccountNo INT,
+Type VARCHAR(20) CHECK (Type IN (&#39;Deposit&#39;,&#39;Withdraw&#39;,&#39;Transfer&#39;)),
+Amount DECIMAL(10,2) CHECK (Amount &gt; 0),
+Date DATE,
+FOREIGN KEY (AccountNo) REFERENCES Accounts(AccountNo)
+);
+Table 6: Loans
+CREATE TABLE Loans (
+LoanID INT PRIMARY KEY,
+LoanType VARCHAR(30),
+Amount DECIMAL(10,2),
+CustomerID INT,
+BranchID INT,
+InterestRate DECIMAL(5,2),
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+FOREIGN KEY (BranchID) REFERENCES Branch(BranchID)
+);
+
+7. Data Insertion
+Insert minimum 3–5 records in each table
+Write INSERT INTO statements.
+1. Branch
+INSERT INTO Branch (BranchID, Name, Address) VALUES
+(1, &#39;Main Branch&#39;, &#39;Hyderabad&#39;),
+(2, &#39;City Branch&#39;, &#39;Vijayawada&#39;),
+(3, &#39;North Branch&#39;, &#39;Visakhapatnam&#39;),
+(4, &#39;South Branch&#39;, &#39;Chennai&#39;);
+2. Customers
+
+INSERT INTO Customers (CustomerID, Name, Phone, Address) VALUES
+(101, &#39;Ravi Kumar&#39;, &#39;9876543210&#39;, &#39;Hyderabad&#39;),
+(102, &#39;Anita Sharma&#39;, &#39;9123456780&#39;, &#39;Vijayawada&#39;),
+(103, &#39;Suresh Reddy&#39;, &#39;9988776655&#39;, &#39;Visakhapatnam&#39;),
+(104, &#39;Priya Nair&#39;, &#39;9012345678&#39;, &#39;Chennai&#39;),
+(105, &#39;Arjun Mehta&#39;, &#39;9090909090&#39;, &#39;Hyderabad&#39;);
+3. Accounts
+INSERT INTO Accounts (AccountNo, AccountType, Balance, BranchID,
+OpeningDate) VALUES
+(1001, &#39;Savings&#39;, 5000.00, 1, &#39;2024-01-10&#39;),
+(1002, &#39;Current&#39;, 15000.00, 2, &#39;2024-02-15&#39;),
+(1003, &#39;Savings&#39;, 8000.00, 3, &#39;2024-03-20&#39;),
+(1004, &#39;Savings&#39;, 12000.00, 4, &#39;2024-04-05&#39;),
+(1005, &#39;Current&#39;, 20000.00, 1, &#39;2024-05-12&#39;);
+4. Account_holders
+INSERT INTO Account_Holders (CustomerID, AccountNo) VALUES
+(101, 1001),
+(102, 1002),
+(103, 1003),
+(104, 1004),
+(105, 1005),
+(101, 1005);
+5. Transactions
+INSERT INTO Transactions (TransactionID, AccountNo, Type, Amount, Date)
+VALUES
+(1, 1001, &#39;Deposit&#39;, 2000.00, &#39;2024-06-01&#39;),
+(2, 1002, &#39;Withdraw&#39;, 3000.00, &#39;2024-06-02&#39;),
+(3, 1003, &#39;Deposit&#39;, 1500.00, &#39;2024-06-03&#39;),
+(4, 1004, &#39;Transfer&#39;, 2500.00, &#39;2024-06-04&#39;),
+(5, 1005, &#39;Deposit&#39;, 5000.00, &#39;2024-06-05&#39;);
+6. Loans
+INSERT INTO Loans (LoanID, LoanType, Amount, CustomerID, BranchID,
+InterestRate) VALUES
+(201, &#39;Home Loan&#39;, 500000.00, 101, 1, 7.5),
+(202, &#39;Car Loan&#39;, 300000.00, 102, 2, 8.0),
+(203, &#39;Education Loan&#39;, 200000.00, 103, 3, 6.5),
+(204, &#39;Personal Loan&#39;, 100000.00, 104, 4, 9.0),
+(205, &#39;Business Loan&#39;, 750000.00, 105, 1, 10.0);
+
+DBMS-Project
+|--database
+|   |--advanced_features.sql
+|   |--schema.sql
+|--node_modules
+|--public
+|   |--css
+|   |   |--style.css
+|--views
+|   |--account_holders.ejs
+|   |--accounts.ejs
+|   |--branches.ejs
+|   |--customers.ejs
+|   |--index.ejs
+|   |--layout.ejs
+|   |--loans.ejs
+|   |--transactions.ejs
+|--.env
+|--db.js
+|--package-lock.json
+|--package.json
+|--server.js

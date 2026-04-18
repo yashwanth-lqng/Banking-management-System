@@ -1,0 +1,67 @@
+<h1 class="mb-4">Dashboard Overview</h1>
+
+<% if (isCustomer) { %>
+    <!-- CUSTOMER DASHBOARD -->
+    <div class="dashboard-grid">
+        <div class="glass-card stat-card">
+            <span class="stat-title">Active Accounts</span>
+            <span class="stat-value"><%= accounts.length %></span>
+        </div>
+        <div class="glass-card stat-card">
+            <span class="stat-title">Total Balance</span>
+            <% let sum = 0; accounts.forEach(a => sum += parseFloat(a.Balance)); %>
+            <span class="stat-value">$<%= sum.toFixed(2) %></span>
+        </div>
+    </div>
+
+    <!-- Accounts Table for Customer -->
+    <div class="glass-card table-container mb-4">
+        <h3 class="mb-3">My Accounts</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Account No</th>
+                    <th>Type</th>
+                    <th>Balance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% accounts.forEach(acc => { %>
+                    <tr>
+                        <td><%= acc.AccountNo %></td>
+                        <td><%= acc.AccountType %></td>
+                        <td style="color: var(--success-color); font-weight: 600;">$<%= parseFloat(acc.Balance).toFixed(2) %></td>
+                        <td><a href="/transactions" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">View Transactions</a></td>
+                    </tr>
+                <% }) %>
+                <% if(accounts.length === 0) { %>
+                    <tr><td colspan="4" class="text-center">No Active Accounts Found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+<% } else { %>
+    <!-- ADMIN DASHBOARD -->
+    <div class="dashboard-grid">
+        <div class="glass-card stat-card">
+            <span class="stat-title">Total Branches</span>
+            <span class="stat-value"><%= branchCount %></span>
+        </div>
+        <div class="glass-card stat-card">
+            <span class="stat-title">Active Customers</span>
+            <span class="stat-value"><%= customerCount %></span>
+        </div>
+        <div class="glass-card stat-card">
+            <span class="stat-title">Total Accounts</span>
+            <span class="stat-value"><%= accountCount %></span>
+        </div>
+        <div class="glass-card stat-card">
+            <span class="stat-title">Active Loans</span>
+            <span class="stat-value"><%= loanCount %></span>
+        </div>
+    </div>
+
+
+<% } %>
